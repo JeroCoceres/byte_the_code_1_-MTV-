@@ -2,6 +2,10 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.forms import AuthenticationForm
 from users.forms import RegisterForm
+from django.contrib.auth.models import User
+from users.models import UserProfile
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 def login_view(request):
     if request.method == "GET":
@@ -24,7 +28,7 @@ def login_view(request):
 
 def register(request):
     if request.method == "GET":
-        return render(request, "users/register.html")
+        return render(request, "users/register.html") 
     elif request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -37,4 +41,13 @@ def register(request):
             return render(request,"users/register.html",context)
         
 def users_list_view(request):
-    return render (request," users/users_list.html")
+    return render (request,"users/users_list.html")
+
+def user_profile_view(request):
+    return render(request, "users/user_profile.html")
+
+@receiver(post_save,sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+        
