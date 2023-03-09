@@ -1,11 +1,13 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.forms import AuthenticationForm
-from users.forms import RegisterForm
+from users.forms import RegisterForm,UserProfileForm
 from django.contrib.auth.models import User
 from users.models import UserProfile
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from admin_settings.models import Language,Country
+
 
 def login_view(request):
     if request.method == "GET":
@@ -18,8 +20,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request,user)
-                return redirect ("index")
-            
+                return redirect ("index")            
         else:
             context = {
                 "errors":form.errors,
@@ -44,7 +45,24 @@ def users_list_view(request):
     return render (request,"users/users_list.html")
 
 def user_profile_view(request):
-    return render(request, "users/user_profile.html")
+    if request.method == "GET":
+        context = {
+            "languages":Language.objects.all(),
+            "countries":Country.objects.all(),
+        }
+        return render(request, "users/user_profile.html",context=context)
+    elif request.method == "POST":
+        form = UserProfileForm(request.POST,request.FILES,instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect ("profile")
+        else:
+            context = {
+                "errors": form.errors,
+                "languages":Language.objects.all(),
+                "countries":Country.objects.all(),
+            }
+        return render(request,"users/user_profile.html",context=context)
 
 @receiver(post_save,sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

@@ -42,7 +42,8 @@ BASE_APPS = [
 MY_APPS = [
     "coins",
     "users",
-    "news"
+    "news",
+    "admin_settings"
 ]
 
 THIRD_APPS = [

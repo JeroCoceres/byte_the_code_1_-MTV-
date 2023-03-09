@@ -172,7 +172,14 @@
                                                 <div class="pt-3">
                                                     <div class="settings-form">
                                                         <h4 class="text-primary">Account Setting</h4>
-                                                        <form action="" method="POST">
+
+                                                        {% if errors %}
+                                                            <h1>{{errors}}</h1>
+                                                        {% endif %}
+
+
+                                                        <form action="" method="POST" enctype="multipart/form-data">
+                                                            {% csrf_token %}
                                                             <div class="form-row">
                                                                 <div class="form-group col-md-6">
                                                                     <label for="first name">First Name</label>
@@ -215,42 +222,42 @@
                                                             </div>
                                                             <div class="form-row">
                                                                 <div class="form-group col-md-6">
-                                                                    <label for="native_language">Native Language</label>
-                                                                    <input type="text" class="form-control" id="native_language" name="native_language" placeholder="Enter native language">
+                                                                    <label for="native_language">Native Language</label> 
+                                                                    <input type="text" class="form-control" id="native_language" name="language" placeholder="Enter native language">
                                                                 </div>
                                                                 <div class="form-group col-md-6">
                                                                     <label for="availability">Availability</label>
                                                                     <select class="form-control" id="availability" name="availability">
                                                                         <option selected>Choose...</option>
-                                                                        <option>Full-time</option>
-                                                                        <option>Part-time</option>
-                                                                        <option>Freelance</option>
-                                                                        <option>Other</option>
+                                                                        <option>full-time</option>
+                                                                        <option>part-time</option>
+                                                                        <option>freelance</option>
+                                                                        <option>other</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
                                                             <div class="form-row">
                                                                 <div class="form-group col-md-6">
                                                                     <label for="birthdate">Birthdate</label>
-                                                                    <input type="date" class="form-control" id="birthdate" name="birthdate">
+                                                                    <input type="date" class="form-control" id="birthdate" name="birth_date">
                                                                 </div>
                                                                 <div class="form-group col-md-6">
                                                                     <label for="year_experience">Years of Experience</label>
-                                                                    <input type="number" class="form-control" id="year_experience" name="year_experience" placeholder="Enter years of experience">
+                                                                    <input type="number" class="form-control" id="year_experience" name="year_of_experience" placeholder="Enter years of experience">
                                                                 </div>
                                                             </div>
                                                             <div class="form-row">
                                                                 <div class="form-group col-md-6">
                                                                     <label>Address</label>
-                                                                    <input type="text" placeholder="1234 Main St" class="form-control">
+                                                                    <input type="text" placeholder="1234 Main St" class="form-control" name="address">
                                                                 </div>
                                                                 <div class="form-group col-md-6">
                                                                     <label>Country</label>
-                                                                    <select class="form-control default-select" id="inputState">
+                                                                    <select class="form-control default-select" id="inputState" name="country">
                                                                         <option selected="">Choose...</option>
-                                                                        <option>Option 1</option>
-                                                                        <option>Option 2</option>
-                                                                        <option>Option 3</option>
+                                                                        {% for country in Countries %}
+                                                                        <option>{{ country.name }}</option>
+                                                                        {% endfor %}
                                                                     </select>
                                                                 </div>
                                                             </div>
