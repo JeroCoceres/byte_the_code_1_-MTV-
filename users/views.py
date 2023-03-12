@@ -7,7 +7,7 @@ from users.models import UserProfile
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from admin_settings.models import Language,Country
-
+from news.utils import get_random_news
 
 def login_view(request):
     if request.method == "GET":
@@ -46,13 +46,28 @@ def users_list_view(request):
 
 def user_profile_view(request):
     if request.method == "GET":
+        main_news,other_news = get_random_news()
         context = {
             "languages":Language.objects.all(),
             "countries":Country.objects.all(),
+            "main_news":main_news,
+            "other_news":other_news,
         }
         return render(request, "users/user_profile.html",context=context)
     elif request.method == "POST":
-        form = UserProfileForm(request.POST,request.FILES,instance=request.user.profile)
+
+        data = request.POST.copy()
+
+        if request.POST.get("country") and Country.objects.filter(name=request.POST.get("country")).exists():
+            country = Country.objects.get(name = request.POST.get("country"))
+            data["country"] = country.id
+        if request.POST.get("language") and Language.objects.filter(name=request.POST.get("language")).exists():
+            language = Language.objects.get(name=request.POST.get("language"))
+            data["language"] = language.id
+        form = UserProfileForm(data,request.FILES,instance=request.user.profile)
+
+
+
         if form.is_valid():
             form.save()
             return redirect ("profile")
